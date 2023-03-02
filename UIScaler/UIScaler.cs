@@ -40,7 +40,7 @@ namespace Scaler
         // Scaling.
 
         private static float _scaleFactor = 100f;
-        private static float ScaleFactor
+        public static float ScaleFactor
         {
             get { return _scaleFactor; }
             set
@@ -57,9 +57,9 @@ namespace Scaler
         //private static float scaleFactorSlider = _scaleFactor;
         internal static CanvasScalerExtended canvasScaler;
         internal static Vector2 referenceResolution;
-        private static float scaleMin = 60f;
-        private static float scaleMax = 120f;
-        internal static float scaleDefault = 75f;
+        public static float scaleMin = 60f;
+        public static float scaleMax = 120f;
+        public static float scaleDefault = 75f;
 
         #endregion
 
@@ -91,31 +91,37 @@ namespace Scaler
 
         #region Functions
 
-        void CreateSetting(string text, float min, float max, float current, Action<float> moved)
+        private void CreateSetting(string text, float min, float max, float current, Action<float> moved)
         {
+            // Find the docking tolerance slider.
             GameObject popupconvas = GameManager.Instance.Game.UI.GetPopupCanvas().gameObject;
             GameObject docking = popupconvas.GetChild("Tolerance Distance for Docking");
 
+            // Clone the docking tolerance slider.
             GameObject scaleSlider = Instantiate(docking, popupconvas.GetChild("ShowVesselLabels").transform.parent);
             scaleSlider.name = text;
-            scaleSlider.GetComponent<SettingsElementDescriptionController>().DescriptionLocalizationKey = "";
 
+            // Modify the strings.
             GameObject label = scaleSlider.GetChild("Label");
             label.GetComponent<Localize>().Term = "";
             label.GetComponent<TextMeshProUGUI>().text = text;
+            scaleSlider.GetComponent<SettingsElementDescriptionController>().DescriptionLocalizationKey = "";
 
+            // Bind a value for the slider with the initial value.
             GameObject setting = scaleSlider.GetChild("Setting");
             setting.GetComponent<UIValueBinderGroup>().BindValue(new Property<float>(current));
 
+            // Add a function call for when the slider is moved.
             GameObject sliderlinear = setting.GetChild("KSP2SliderLinear");
             SliderExtended sliderExtended = sliderlinear.GetComponent<SliderExtended>();
             sliderExtended.onValueChanged.AddListener(new UnityAction<float>(moved));
-
+            
+            // Set the slider range and update it visually.
             var writeNumber = sliderlinear.GetComponent<UIValue_WriteNumber_Slider>();
             writeNumber.SetMappedValueRange(min, max, true);
         }
 
-        static void HookSaveButton()
+        private static void HookSaveButton()
         {
             GameObject popupconvas = GameManager.Instance.Game.UI.GetPopupCanvas().gameObject;
             GameObject saveButton = popupconvas.GetChild("Apply Settings");
@@ -123,16 +129,16 @@ namespace Scaler
             saveButton.GetComponent<ButtonExtended>().onLeftClick.AddListener(Save);
         }
 
-        void SliderMoved(float value)
+        public void SliderMoved(float value)
         {
             value = Mathf.Lerp(scaleMin, scaleMax, value);
             ScaleFactor = value;
         }
 
-        static void SetScale(float scale)
+        private static void SetScale(float scale)
         {
             canvasScaler.referenceResolution = referenceResolution * (1 / (scale / 100));
-            Debug.Log($"[Scaler] Set the scale: {scale} {canvasScaler.referenceResolution}");
+            Debug.Log($"[UIScaler] Set the scale: {scale} {canvasScaler.referenceResolution}");
         }
 
         #endregion
