@@ -1,0 +1,13 @@
+{
+  "mod_id": "uiscaler",
+  "name": "UI Scaler",
+  "author": "Halban",
+  "description": "Change the size of the game's user interface via a slider in the settings menu.",
+  "source": "https://github.com/Halbann/UIScaler",
+  "version": "v0.1.0",
+  "dependencies": [],
+  "ksp2_version": {
+    "min": "0",
+    "max": "1"
+  }
+}
