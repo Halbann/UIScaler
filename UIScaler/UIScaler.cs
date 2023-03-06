@@ -15,18 +15,21 @@ using KSP.UI.Binding.Core;
 using KSP.Api.CoreTypes;
 using KSP.UI;
 
+using BepInEx;
+using SpaceWarp;
 using SpaceWarp.API.Mods;
 
-
-namespace Scaler
+namespace UIScaler
 {
-    [MainMod]
-    public class ScalerMod : Mod
+    [BepInDependency(SpaceWarpPlugin.ModGuid, SpaceWarpPlugin.ModVer)]
+    [BepInPlugin(ModGuid, ModName, ModVer)]
+    public class UIScaler : BaseSpaceWarpPlugin
     {
-        #region Fields
+        public const string ModGuid = "com.github.halbann.uiscaler";
+        public const string ModName = "UI Scaler";
+        public const string ModVer = "0.1.1";
 
-        // Main.
-        public static bool loaded = false;
+        #region Fields
 
         // Paths.
         private static string _assemblyFolder;
@@ -49,17 +52,15 @@ namespace Scaler
                     return;
 
                 _scaleFactor = Mathf.Round(value);
-                //scaleFactorSlider = value;
                 SetScale(_scaleFactor);
             }
         }
 
-        //private static float scaleFactorSlider = _scaleFactor;
         internal static CanvasScalerExtended canvasScaler;
         internal static Vector2 referenceResolution;
         public static float scaleMin = 60f;
         public static float scaleMax = 120f;
-        public static float scaleDefault = 75f;
+        public static float scaleDefault = 80f;
 
         #endregion
 
@@ -67,13 +68,6 @@ namespace Scaler
 
         public override void OnInitialized()
         {
-            if (loaded)
-            {
-                Destroy(this);
-            }
-
-            loaded = true;
-
             gameObject.hideFlags = HideFlags.HideAndDontSave;
             DontDestroyOnLoad(gameObject);
 
@@ -175,6 +169,6 @@ namespace Scaler
 
     public class ScalerSettings
     {
-        public float uiScale = ScalerMod.scaleDefault;
+        public float uiScale = UIScaler.scaleDefault;
     }
 }
